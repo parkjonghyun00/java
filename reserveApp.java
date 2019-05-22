@@ -1,4 +1,4 @@
-/*	version 	: 1.0.1
+/*	version 	: 1.0.2
  * 	name		: 4Á¶
  * 	Last date	: 19.05.23
  * contents		: ¹Ì¿ë½Ç ¾Û
