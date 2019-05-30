@@ -27,6 +27,10 @@ class Customer extends person{
 		this.name = name;
 		this.number = number;
 	}
+	public String getName()
+	{
+		return name;
+	}
 }
 // 디자이너
 class Designer extends person{
@@ -51,7 +55,7 @@ class Reserver extends JFrame{
 	
 	
 	static Manager man = new Manager();
-	File f = new File("C:\\Users\\pjh\\Desktop\\javatext\\javacustomer.txt");
+	File f = new File("data.txt");
 	static BufferedReader r = null;
 	static BufferedWriter w = null;
 	int max = 100;
@@ -60,7 +64,7 @@ class Reserver extends JFrame{
 		String s;
 		String[] sArray = new String[max];
 		try {
-			r = new BufferedReader(new FileReader("C:\\Users\\pjh\\Desktop\\javatext\\javacustomer.txt"));	//파일 불러오기
+			r = new BufferedReader(new FileReader("data.txt"));	//파일 불러오기
 			while((s=r.readLine()) != null) {	// 파일 한줄씩 읽으면서 고객 정보 저장
 				list.add(s);
 				System.out.println(s);
@@ -73,10 +77,10 @@ class Reserver extends JFrame{
 				   String tok=(String)list.get(i);
 				   String[] token=tok.split(", ");
 				   cm[i]=new Customer(token[0], token[1]);
+				   cus.put(cm[i].getName(), cm[i]);
 			}
-
 			for(int i=0; i<list.size(); i++)
-				   System.out.println(cm[i]);
+				   System.out.println(cus.get(cm[i].getName()));
 
 		}
 		catch(IOException e) {
@@ -125,6 +129,7 @@ class reserveListener implements ActionListener{
 public class app {
 	public static void main(String[] args) {
 		Reserver reserve = new Reserver();
-		reserve.run();
+		reserve.fileopen();
+		//reserve.run();
 	}
 }
