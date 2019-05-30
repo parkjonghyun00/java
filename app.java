@@ -1,8 +1,7 @@
 import javax.swing.*;
 
-import java.awt.Container;
-import java.awt.LayoutManager;
 import java.awt.event.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -27,10 +26,6 @@ class Customer extends person{
 		this.name = name;
 		this.number = number;
 	}
-	public String getName()
-	{
-		return name;
-	}
 }
 // 디자이너
 class Designer extends person{
@@ -47,6 +42,8 @@ class Manager extends person{
 }
 // 예약 프로그램
 class Reserver extends JFrame{
+	Container contentPane;		
+	JButton b1, b2, b3, b4;	//4개의 버튼
 	
 	private	Scanner sc = new Scanner(System.in);
 	private HashMap<String, Customer> cus = new HashMap<String, Customer>();
@@ -55,7 +52,7 @@ class Reserver extends JFrame{
 	
 	
 	static Manager man = new Manager();
-	File f = new File("data.txt");
+	File f = new File("C:\\Users\\pjh\\Desktop\\javatext\\javacustomer.txt");
 	static BufferedReader r = null;
 	static BufferedWriter w = null;
 	int max = 100;
@@ -64,7 +61,7 @@ class Reserver extends JFrame{
 		String s;
 		String[] sArray = new String[max];
 		try {
-			r = new BufferedReader(new FileReader("data.txt"));	//파일 불러오기
+			r = new BufferedReader(new FileReader("C:\\Users\\pjh\\Desktop\\javatext\\javacustomer.txt"));	//파일 불러오기
 			while((s=r.readLine()) != null) {	// 파일 한줄씩 읽으면서 고객 정보 저장
 				list.add(s);
 				System.out.println(s);
@@ -77,59 +74,80 @@ class Reserver extends JFrame{
 				   String tok=(String)list.get(i);
 				   String[] token=tok.split(", ");
 				   cm[i]=new Customer(token[0], token[1]);
-				   cus.put(cm[i].getName(), cm[i]);
 			}
+
 			for(int i=0; i<list.size(); i++)
-				   System.out.println(cus.get(cm[i].getName()));
+				   System.out.println(cm[i]);
 
 		}
 		catch(IOException e) {
 			System.out.println("파일 입출력 오류");
 		}
 	}
-	
-	void reserve() { //예약
-		System.out.print("예약하는 분의 이름을 적으세요");
-		String name = sc.next();
-		System.out.println("예약하는 분의 전화번호를 적으세요");
-		int pnumber = sc.nextInt();
 		
-	}
-	
 	void run() {
-		String[] button = {"0","예약하기","회원모드","미용사모드","관리자모드"};	
 		setTitle("미용실 예약앱");	//프레임의 타이틀 달기
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//프레임의 윈도우를 닫으면 프로그램 종료
-		setLayout(null);
+		contentPane = getContentPane();
+		contentPane.setLayout(new FlowLayout());
 		
-		reserveListener reserve = new reserveListener();
-		for(int i=1;i<5;i++) {
-			JButton b = new JButton(button[i]);
-			b.setLocation(50+200*(i%2),50+(50*(i/3)));
-			b.setSize(150,30);
-			b.addActionListener(reserve);
-			add(b);
-		}
+		b1 = new JButton("예약하기");
+		b1.addActionListener(new MyButtonListener());
+		contentPane.add(b1);
+		
+		b2 = new JButton("회원모드");
+		b2.addActionListener(new MyButtonListener());
+		contentPane.add(b2);
+		
+		b3 = new JButton("미용사모드");
+		b3.addActionListener(new MyButtonListener());
+		contentPane.add(b3);
+		
+		b4 = new JButton("관리자모드");
+		b4.addActionListener(new MyButtonListener());
+		contentPane.add(b4);
 		
 		setSize(500,200);
 		setVisible(true);
 	}
-}
-class reserveListener implements ActionListener{
-	public void actionPerformed(ActionEvent e) {
-		JButton b = (JButton)e.getSource();	//선택된 버튼을 알아낸다.
-		
-		if(b.getText().equals("예약하기"))
-			b.setText("");
+	
+	void reserve() {
+		contentPane.setLayout(new FlowLayout());
+		contentPane.add(new JLabel("이름 : "));
+		contentPane.add(JTextfield(10));
+		contentPane.add(new JLabel("전화번호 : "));
+		contentPane.add(JTextfield(20));
+		setSize(500,200);
+		setVisible(true);
+	}
+	
+	
+	private Component JTextfield(int i) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	class MyButtonListener implements ActionListener{
+		public void actionPerformed(ActionEvent e) {
+			Object source = e.getSource();
+			
+			//source가 어떤 버튼인지 만들어 줌.
+			if(source == b1) {
+				b1.setVisible(false);	b2.setVisible(false);
+				b3.setVisible(false);	b4.setVisible(false);
+				reserve();
+			}
+		}
 	}
 }
+
 
 
 // 앱
 public class app {
 	public static void main(String[] args) {
 		Reserver reserve = new Reserver();
-		reserve.fileopen();
-		//reserve.run();
+		reserve.run();
 	}
 }
