@@ -47,7 +47,7 @@ class Reserver extends JFrame{
 	private	Scanner sc = new Scanner(System.in);
 	private HashMap<String, Customer> cus = new HashMap<String, Customer>();
 	private HashMap<String, Designer> des = new HashMap<String, Designer>();
-	ArrayList list = new ArrayList();
+	ArrayList<String> list = new ArrayList<>();	//String으로 배열 저장
 	
 	
 	static Manager man = new Manager();
@@ -58,25 +58,24 @@ class Reserver extends JFrame{
 	
 	void fileopen() {
 		String s;
-		int n = 0;
 		String[] sArray = new String[max];
 		try {
 			r = new BufferedReader(new FileReader("C:\\Users\\pjh\\Desktop\\javatext\\javacustomer.txt"));	//파일 불러오기
 			while((s=r.readLine()) != null) {	// 파일 한줄씩 읽으면서 고객 정보 저장
-				list.add(s);	n++;
+				list.add(s);
 				System.out.println(s);
 			}
 			r.close();
 			
-			Customer[] cm = new Customer[n];
 			
-			for(int i=0; i<n; i++){
+			Customer[] cm = new Customer[list.size()];
+			for(int i=0; i<list.size(); i++){
 				   String tok=(String)list.get(i);
 				   String[] token=tok.split(", ");
 				   cm[i]=new Customer(token[0], token[1]);
 			}
 
-			for(int i=0; i<n; i++)
+			for(int i=0; i<list.size(); i++)
 				   System.out.println(cm[i]);
 
 		}
@@ -88,7 +87,7 @@ class Reserver extends JFrame{
 	void reserve() { //예약
 		System.out.print("예약하는 분의 이름을 적으세요");
 		String name = sc.next();
-		System.out.println("예약하는 분의 전화번호를 적으세요(-는 빼고 적으세요)");
+		System.out.println("예약하는 분의 전화번호를 적으세요");
 		int pnumber = sc.nextInt();
 		
 	}
@@ -97,18 +96,27 @@ class Reserver extends JFrame{
 		String[] button = {"0","예약하기","회원모드","미용사모드","관리자모드"};	
 		setTitle("미용실 예약앱");	//프레임의 타이틀 달기
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//프레임의 윈도우를 닫으면 프로그램 종료
-		
 		setLayout(null);
+		
+		reserveListener reserve = new reserveListener();
 		for(int i=1;i<5;i++) {
-			JButton b = new JButton(button[1]);
-			b.setLocation(40,40);
-			b.setSize(30,30);
+			JButton b = new JButton(button[i]);
+			b.setLocation(50+200*(i%2),50+(50*(i/3)));
+			b.setSize(150,30);
+			b.addActionListener(reserve);
 			add(b);
 		}
 		
-		setSize(300,200);
+		setSize(500,200);
 		setVisible(true);
+	}
+}
+class reserveListener implements ActionListener{
+	public void actionPerformed(ActionEvent e) {
+		JButton b = (JButton)e.getSource();	//선택된 버튼을 알아낸다.
 		
+		if(b.getText().equals("예약하기"))
+			b.setText("");
 	}
 }
 
