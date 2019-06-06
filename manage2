@@ -44,7 +44,7 @@ class Test extends JFrame implements ActionListener {
 		title[0] = "회원 이름";
 		title[1] = "회원 예약시간";
 		title[2] = "머리 모양";
-		
+
 		String data[][] = new String[0][0];
 
 		table = new JTable(data, title);
@@ -79,7 +79,7 @@ class Test extends JFrame implements ActionListener {
 		this.add(panelList);
 		this.add(panelTable);
 		this.add(panelNormal);
-		
+
 		this.setVisible(true);
 	}
 
@@ -88,7 +88,7 @@ class Test extends JFrame implements ActionListener {
 		titleTemp[0] = "회원 이름";
 		titleTemp[1] = "회원 예약시간";
 		titleTemp[2] = "회원 머리모양";
-		
+
 		int size = StuManager.list.size();
 		String[][] dataStudentArray = new String[size][3];
 
@@ -285,23 +285,23 @@ class InputStud extends JFrame implements ActionListener {
 		professor_combo = new JComboBox();
 		time_combo = new JComboBox();
 		subject = new JComboBox();
-		btn1 = new JButton("확인");
-		btn2 = new JButton("취소");
+		btn1 = new JButton("등록");
+		btn2 = new JButton("닫기");
 		btn1.addActionListener(this);
 		btn2.addActionListener(this);
 		group = new ButtonGroup();
 		for (Pro p : ProManager.list) {
 			professor_combo.addItem(p.name);
-			
+
 		}
 		for (Pro tm : ProManager.list) {
 			time_combo.addItem(tm.time);
 		}
-		
+
 		subject.addItem("파마");
 		subject.addItem("커트");
 		subject.addItem("염색");
-		
+
 		panelName.add(name);
 		panelName.add(name_t);
 
@@ -327,15 +327,12 @@ class InputStud extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btn1) {
-			String str = (String) professor_combo.getSelectedItem();
-			int selectedIndex = professor_combo.getSelectedIndex();
-			String str2 = (String) age_combo.getSelectedItem();
-			int selectedIndex2 = age_combo.getSelectedIndex();
-			String str3 = (String) age_combo.getSelectedItem();
-			int selectedIndex3 = age_combo.getSelectedIndex();	
-			String time = "";
-			
-			Stu s = new Stu(name_t.getText().toString().trim(), str3, str,str2);
+			String pro = (String) professor_combo.getSelectedItem();
+
+			String time = (String) time_combo.getSelectedItem();
+			String subject1 = (String) subject.getSelectedItem();
+
+			Stu s = new Stu(name_t.getText().toString().trim(), time, pro,subject1);
 			StuManager.list.add(s);
 			name_t.setText(null);
 		}
@@ -378,8 +375,8 @@ class InputPro extends JFrame implements ActionListener {
 		time0 = new JRadioButton("12~1", false);
 		time1 = new JRadioButton("1~2", false);
 		time2 = new JRadioButton("2~3", false);
-		btn1 = new JButton("확인");
-		btn2 = new JButton("취소");
+		btn1 = new JButton("등록");
+		btn2 = new JButton("닫기");
 		btn1.addActionListener(this);
 		btn2.addActionListener(this);
 		group = new ButtonGroup();
@@ -387,7 +384,7 @@ class InputPro extends JFrame implements ActionListener {
 		group.add(time0);
 		group.add(time1);
 		group.add(time2);
-		
+
 		panelName.add(name);
 		panelName.add(name_t);
 
