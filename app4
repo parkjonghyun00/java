@@ -1,0 +1,476 @@
+/*	update : 1.14
+ *  updated date : 06/06
+ *  updated user : pjh
+ *  contents : 기능 추가 (미용사 삭제)
+ */
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
+public class App {	// 프로그램을 실행하는 class
+	public static void main(String[] args) {
+		new Program();
+	}
+}
+
+class Program extends JFrame implements ActionListener {	// 화면의 첫 화면을 나타내는 class
+	JButton btn1 = null;	JButton btn2 = null;
+	JButton btn3 = null;	JButton btn4 = null;
+	JButton btn5 = null;	JButton btn6 = null;
+	JTable table = null;
+
+	public Program() {	
+		super("헤어샵 예약프로그램");
+		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		this.setBounds(200, 200, 800, 400);
+		this.setLayout(new FlowLayout());
+
+		JPanel panelComboBox = new JPanel();
+		JPanel panelList = new JPanel();
+		JPanel panelTable = new JPanel();
+		JPanel panelNormal = new JPanel();
+
+		panelComboBox.setLayout(new FlowLayout());
+		panelList.setLayout(new FlowLayout());
+		panelTable.setLayout(new FlowLayout());
+		panelNormal.setLayout(new FlowLayout());
+
+		String title[] = new String[5];	// 회원 title 이름 저장
+		title[0] = "회원 이름";
+		title[1] = "회원 전화번호";
+		title[2] = "회원 예약시간";
+		title[3] = "회원 머리 모양";
+		title[4] = "회원 담당 미용사";
+
+		String data[][] = new String[0][0];	//회원 정보
+
+		table = new JTable(data, title);
+		JScrollPane sp = new JScrollPane(table);
+		sp.setPreferredSize(new Dimension(500, 200));	// 회원 title 크기
+
+		panelTable.add(sp);
+		
+		btn1 = new JButton("예약 등록");
+		btn1.addActionListener(this);
+		panelNormal.add(btn1);
+
+		btn2 = new JButton("예약 삭제");
+		btn2.addActionListener(this);
+		panelNormal.add(btn2);
+
+		btn3 = new JButton("예약 출력");
+		btn3.addActionListener(this);
+		panelNormal.add(btn3);
+
+		btn4 = new JButton("미용사 등록");
+		btn4.addActionListener(this);
+		panelNormal.add(btn4);
+		
+		btn5 = new JButton("미용사  출력");
+		btn5.addActionListener(this);
+		panelNormal.add(btn5);
+
+		// 패널 연결
+		this.add(panelComboBox);
+		this.add(panelList);
+		this.add(panelTable);
+		this.add(panelNormal);
+
+		this.setVisible(true);
+	}
+
+	public void refreshTable() {	//	title에 들어갈 정보
+		String titleTemp[] = new String[4];
+		titleTemp[0] = "회원 이름";
+		titleTemp[1] = "회원 예약시간";
+		titleTemp[2] = "회원 머리모양";
+		titleTemp[3] = "회원 담당 미용사";
+
+		int size = ClientManager.list.size();
+		String[][] clientDataArray = new String[size][titleTemp.length];
+
+		for (int i = 0; i < size; i++) {	//저장되어 있는 만큼 정보 출력
+			Client clientData = ClientManager.list.get(i);
+
+			clientDataArray[i][0] = clientData.name;
+			clientDataArray[i][1] = clientData.time;
+			clientDataArray[i][2] = clientData.hairShape;
+			clientDataArray[i][3] = clientData.designer;
+		}
+		table.setModel(new DefaultTableModel(clientDataArray, titleTemp));
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+
+		if (e.getSource() == btn1) {	//예약 등록
+			new reserveClient();
+		}
+		if (e.getSource() == btn2) {	//예약 삭제
+			if (table.getSelectedRow() == -1) {		
+			} else {
+				int deleteIndex = table.getSelectedRow();
+				ClientManager.list.remove(deleteIndex);
+				this.refreshTable();
+			}
+		}
+		if (e.getSource() == btn3) {	//예약 출력
+			String titleTemp[] = new String[5];
+			titleTemp[0] = "회원 이름";
+			titleTemp[1] = "회원 전화번호";
+			titleTemp[2] = "회원 예약시간";
+			titleTemp[3] = "회원 머리 모양";
+			titleTemp[4] = "회원 담당 미용사";
+
+			int size = ClientManager.list.size();
+			String[][] clientDataArray = new String[size][titleTemp.length];
+
+			for (int i = 0; i < size; i++) {
+				Client clientData = ClientManager.list.get(i);
+
+				clientDataArray[i][0] = clientData.name;
+				clientDataArray[i][1] = clientData.number;
+				clientDataArray[i][2] = clientData.time;
+				clientDataArray[i][3] = clientData.hairShape;
+				clientDataArray[i][4] = clientData.designer;
+			}
+
+			table.setModel(new DefaultTableModel(clientDataArray, titleTemp));
+		}
+		if (e.getSource() == btn4) {	//미용사 등록
+			new InputDesigner();
+		}
+		if (e.getSource() == btn5) {	//미용사 출력
+			new printDesigner();
+		}
+	}
+
+}
+class printDesigner extends JFrame implements ActionListener {	//미용사 예약 출력
+	JButton btn1 = null;
+	JButton btn2 = null;
+	JTable table = null;
+	JTable table2 = null;
+
+	ArrayList<Client> client_list;	//고객 정보
+	public printDesigner() {
+		super("미용사별 예약관리");
+		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		this.setBounds(200, 200, 500, 600);
+		this.setLayout(new FlowLayout());
+
+		JPanel panelPrint = new JPanel();
+		JPanel panelButton = new JPanel();
+		JPanel panelRelated = new JPanel();
+
+		panelPrint.setLayout(new FlowLayout());
+		panelButton.setLayout(new FlowLayout());
+		panelRelated.setLayout(new FlowLayout());
+
+		String title[] = new String[2];
+		title[0] = "이름";
+		title[1] = "사번";
+
+		int size = DesignerManager.list.size();			
+		String[][] dataProArray = new String[size][2];
+
+		for (int i = 0; i < size; i++) {	//디자이너 정보 출력
+			Designer dataPro = DesignerManager.list.get(i);
+			dataProArray[i][0] = dataPro.name;
+			dataProArray[i][1] = dataPro.number;
+		}
+
+		table = new JTable(dataProArray, title);
+		JScrollPane sp = new JScrollPane(table);
+		sp.setPreferredSize(new Dimension(300, 200));
+		panelPrint.add(sp);
+
+		btn1 = new JButton("관련 회원 정보 출력");
+		btn1.addActionListener(this);
+		panelButton.add(btn1);
+
+		btn2 = new JButton("확인");
+		btn2.addActionListener(this);
+		panelButton.add(btn2);
+
+		String data[][] = new String[0][0];
+		table2 = new JTable(data,title);
+		JScrollPane sp2 = new JScrollPane(table2);
+		sp2.setPreferredSize(new Dimension(300, 200));
+		panelRelated.add(sp2);
+
+		this.add(panelPrint);
+		this.add(panelButton);
+		this.add(panelRelated);
+		this.setVisible(true);
+	}
+
+	public void refreshTable(){	//title
+		String titleTemp[] = new String[3];
+		titleTemp[0] = "이름";
+		titleTemp[1] = "이용시간";
+		titleTemp[2] = "머리종류";
+		int size = client_list.size();
+		String[][] clientDataArray = new String[size][3];
+
+		for (int i = 0; i < size; i++) {
+			Client clientData = client_list.get(i);
+
+			clientDataArray[i][0] = clientData.name;
+			clientDataArray[i][1] = clientData.time;
+			clientDataArray[i][2] = clientData.hairShape;
+		}
+		table2.setModel(new DefaultTableModel(clientDataArray, titleTemp));
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource()==btn1){
+			if (table.getSelectedRow() == -1) {
+			} else {
+				int deleteIndex = table.getSelectedRow();
+				Designer temp = DesignerManager.list.get(deleteIndex);
+				client_list = new ArrayList<Client>();
+				for(Client s : ClientManager.list){
+					if(s.designer.equals(temp.name)){
+						client_list.add(s);
+					}
+				}
+				this.refreshTable();
+			}
+		}
+		if(e.getSource()==btn2){
+			dispose();
+		}
+	}
+}
+
+class reserveClient extends JFrame implements ActionListener {
+	public int ch = 0;
+	JLabel name, time, designer, hair_shape, number;
+	JTextField name_t, number_t;
+	JComboBox time_combo;
+	JComboBox professor_combo,hairShape;
+	JButton btn1, btn2, btn3;
+	ButtonGroup group;
+
+	public reserveClient() {	//예약 등록
+		super("예약 입력");
+		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		this.setBounds(200, 200, 300, 300);
+		this.setLayout(new FlowLayout());
+
+		JPanel panelName = new JPanel();
+		JPanel panelNumber = new JPanel();
+		JPanel panelRadio = new JPanel();
+		JPanel panelTime = new JPanel();
+		JPanel panelCombo = new JPanel();
+		JPanel panelButton = new JPanel();
+
+		panelName.setLayout(new FlowLayout());
+		panelNumber.setLayout(new FlowLayout());
+		panelRadio.setLayout(new FlowLayout());
+		panelTime.setLayout(new FlowLayout());
+		panelCombo.setLayout(new FlowLayout());
+		panelButton.setLayout(new FlowLayout());
+
+		name = new JLabel("이름 : ");
+		number = new JLabel("전화번호 : ");
+		time = new JLabel("예약시간 : ");
+		designer = new JLabel("미용사 : ");
+		hair_shape = new JLabel("머리스타일 : ");
+		name_t = new JTextField(10);
+		number_t = new JTextField(10);
+		professor_combo = new JComboBox();
+		time_combo = new JComboBox();
+		hairShape = new JComboBox();
+		btn1 = new JButton("확인");
+		btn2 = new JButton("등록");
+		btn3 = new JButton("닫기");
+		
+		btn1.addActionListener(this);
+		btn2.addActionListener(this);
+		btn3.addActionListener(this);
+		group = new ButtonGroup();
+		for (Designer p : DesignerManager.list)		professor_combo.addItem(p.name);
+		
+		hairShape.addItem("커트(1시간)");
+		hairShape.addItem("파마(2시간)");
+		hairShape.addItem("염색(2시간)");
+
+		panelName.add(name);
+		panelName.add(name_t);
+		panelNumber.add(number);
+		panelNumber.add(number_t);
+		panelCombo.add(designer);
+		panelCombo.add(professor_combo);	
+		panelTime.add(time);
+		panelTime.add(time_combo);
+		panelCombo.add(hair_shape);
+		panelCombo.add(hairShape);
+		panelButton.add(btn1);
+		panelButton.add(btn2);
+		panelButton.add(btn3);
+		
+		this.add(panelName);
+		this.add(panelNumber);
+		this.add(panelRadio);
+		this.add(panelTime);
+		this.add(panelCombo);
+		this.add(panelButton, BorderLayout.SOUTH);
+		this.setVisible(true);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btn2) {
+			if(ch!=0) {
+				String Designer = (String) professor_combo.getSelectedItem();
+				String time = (String) time_combo.getSelectedItem();
+				String choosehairshape = (String) hairShape.getSelectedItem();
+				Client s = new Client(name_t.getText().toString().trim(),number_t.getText().toString().trim(), time, Designer,choosehairshape);
+				ClientManager.list.add(s);
+				name_t.setText(null);
+				number_t.setText(null);
+			}
+		}
+		if (e.getSource() == btn3) {
+			dispose();
+		}
+		if(e.getSource() == btn1) {
+			time_combo.removeAllItems() ;
+			for (Designer p : DesignerManager.list) {
+				if(hairShape.getSelectedItem()=="커트1시간") {	//커트 1시간일 경우
+					if(professor_combo.getSelectedItem().equals(p.name)) {
+						if(p.time12 != "")	time_combo.addItem(p.time12);	if(p.time13 != "")	time_combo.addItem(p.time13);
+						if(p.time14 != "")	time_combo.addItem(p.time14);	if(p.time15 != "")	time_combo.addItem(p.time15);
+						if(p.time16 != "")	time_combo.addItem(p.time16);	if(p.time17 != "")	time_combo.addItem(p.time17);
+					}
+				}
+				else if((hairShape.getSelectedItem()=="파마2시간")||(hairShape.getSelectedItem()=="염색2시간")){
+					if((p.time12 != "")&&(p.time13!= ""))time_combo.addItem("12~14");
+					if((p.time13 != "")&&(p.time14!= ""))time_combo.addItem("13~15");
+					if((p.time14 != "")&&(p.time15!= ""))time_combo.addItem("14~16");
+					if((p.time15 != "")&&(p.time16!= ""))time_combo.addItem("15~17");
+					if((p.time16 != "")&&(p.time17!= ""))time_combo.addItem("16~18");
+				}
+			}
+			ch++;
+		}
+	}
+}
+
+class InputDesigner extends JFrame implements ActionListener {	//미용사 등록
+	JLabel name, number;	//이름, 사번
+	JTextField name_t, number_t;	//이름 텍스트, 사번 텍스트
+	JCheckBox time12, time13, time14, time15, time16, time17;	// 시간
+	JButton btn1, btn2;	//등록, 뒤로
+	ButtonGroup group;	//
+
+	public InputDesigner() {
+		super("미용사 입력");
+
+		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		this.setBounds(200, 200, 250, 300);
+		this.setLayout(new FlowLayout());
+
+		JPanel panelName = new JPanel();
+		JPanel panelNumber = new JPanel();
+		JPanel panelCheck = new JPanel();
+		JPanel panelButton = new JPanel();
+
+		panelName.setLayout(new FlowLayout());
+		panelNumber.setLayout(new FlowLayout());
+		panelButton.setLayout(new FlowLayout());
+
+		name = new JLabel("이름 : ");
+		number = new JLabel("사번 : ");
+		name_t = new JTextField(10);
+		number_t = new JTextField(10);
+		time12 = new JCheckBox("12~13",false);		time13 = new JCheckBox("13~14",false);
+		time14 = new JCheckBox("14~15",false);		time15 = new JCheckBox("15~16",false);
+		time16 = new JCheckBox("16~17",false);		time17 = new JCheckBox("17~18",false);
+		btn1 = new JButton("등록");
+		btn2 = new JButton("닫기");
+		btn1.addActionListener(this);
+		btn2.addActionListener(this);
+		group = new ButtonGroup();
+		
+		panelName.add(name);		panelName.add(name_t);
+
+		panelCheck.add(time12);		panelCheck.add(time13);
+		panelCheck.add(time14);		panelCheck.add(time15);
+		panelCheck.add(time16);		panelCheck.add(time17);
+		
+		panelNumber.add(number);	panelNumber.add(number_t);
+
+		panelButton.add(btn1);		panelButton.add(btn2);
+
+		this.add(panelName);
+		this.add(panelCheck);
+		this.add(panelNumber);
+		this.add(panelButton, BorderLayout.SOUTH);
+
+		this.setVisible(true);
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btn1) {
+			String times12="";	String times13="";	String times14=""; 	String times15="";	String times16="";	String times17="";
+			if((time12.isSelected())||((time13.isSelected()))||(time14.isSelected())||((time15.isSelected()))||(time16.isSelected())||((time17.isSelected()))) {
+				if(time12.isSelected())	times12 = "12~13";		if(time13.isSelected())	times13 = "13~14";
+				if(time14.isSelected())	times14 = "14~15";		if(time15.isSelected())	times15 = "15~16";
+				if(time16.isSelected())	times16 = "16~17";		if(time17.isSelected())	times17 = "17~18";
+			}
+			Designer p = new Designer(name_t.getText().toString().trim(),times12,times13, times14,times15,times16,times17, number_t.getText().toString().trim());
+			DesignerManager.list.add(p);
+			name_t.setText(null);
+			number_t.setText(null);
+		}
+		if (e.getSource() == btn2) {
+			dispose();
+		}
+	}
+}
+
+class Client {
+	String name;
+	String number;
+	String time;
+	String designer;
+	String hairShape;
+
+	public Client(String name, String number, String time, String designer, String hairShape) {
+		this.name = name;
+		this.number = number;
+		this.time = time;
+		this.designer = designer;
+		this.hairShape = hairShape;
+	}
+}
+class ClientManager {
+	public static ArrayList<Client> list = new ArrayList<Client>();
+}
+class Designer {
+	String name;
+	String time12;	String time13;	String time14; 	String time15;	String time16;	String time17;
+	String number;
+	// ArrayList<Client> s = new ArrayList<Client>();
+	public Designer(String name, String time12, String time13, String time14, String time15, String time16, String time17,String number) {
+		this.name = name;			this.number = number;
+		this.time12 =time12;		this.time13 =time13;
+		this.time14 =time14;		this.time15 =time15;
+		this.time16 =time16;		this.time17 =time17;
+	}
+}
+class DesignerManager {
+	public static ArrayList<Designer> list = new ArrayList<Designer>();
+}
