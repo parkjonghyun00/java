@@ -3,16 +3,12 @@
  *  updated user : pjh
  *  contents : 기능 추가 (미용사 삭제)
  */
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -21,15 +17,87 @@ public class App {	// 프로그램을 실행하는 class
 		new Program();
 	}
 }
+class Program extends JFrame implements ActionListener{		
+	private JButton btn1=null, btn2=null, btn3=null;	//버튼
+	private Container contentPane;
+	public Program() {	//실행
+		setTitle("미용실 예약앱");	//프레임의 타이틀 달기
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//프레임의 윈도우를 닫으면 프로그램 종료
+		contentPane = getContentPane();
+		contentPane.setLayout(new FlowLayout());
+		
+		btn1 = new JButton("예약하기");
+		btn1.addActionListener(this);
+		contentPane.add(btn1);
+		
+		btn2 = new JButton("예약보기");
+		btn2.addActionListener(this);
+		contentPane.add(btn2);
+		
+		btn3 = new JButton("관리자모드");
+		btn3.addActionListener(this);
+		contentPane.add(btn3);
+		
+		setSize(300,150);
+		setVisible(true);
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btn1) 	//예약하기
+			new reserveClient();
+		if (e.getSource() == btn2) 	//예약보기
+			new printDesigner();
+		if (e.getSource() == btn3) 	//관리자모드
+			new Login();
+	}
+}
+class Login extends JFrame implements ActionListener{	//로그인 클래스
+	private JButton btn1 = null, btn2 = null;
+	private Container contentPane;
+	JTextField id_t, pw_t;	//아이디 텍스트, 패스워드 텍스트
+	public Login() {
+		super("로그인 모드");
+		JPanel panelinformation = new JPanel();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//프레임의 윈도우를 닫으면 프로그램 종료
+		contentPane = getContentPane();
+		contentPane.setLayout(new FlowLayout());
+		
+		contentPane.add(new JLabel("ID"));
+		id_t = new JTextField(10);
+		contentPane.add(id_t);
+		
+		contentPane.add(new JLabel("password:"));
+		pw_t = new JTextField(10);
+		contentPane.add(pw_t);
+		
+		btn1 = new JButton("확인");
+		btn1.addActionListener(this);
+		contentPane.add(btn1);
+		
+		btn2 = new JButton("뒤로");
+		btn2.addActionListener(this);
+		contentPane.add(btn2);
+		
+		setSize(300,200);
+		setVisible(true);
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btn1) { 	//예약하기
+			if(id_t.getText().toString()!="1"&&pw_t.getText().toString()!="1") {
+				new ManagerProgram();
+			}
+		}
+		if (e.getSource() == btn2)	dispose(); 	//관리자모드
+	}
+}
 
-class Program extends JFrame implements ActionListener {	// 화면의 첫 화면을 나타내는 class
-	JButton btn1 = null;	JButton btn2 = null;
-	JButton btn3 = null;	JButton btn4 = null;
-	JButton btn5 = null;	JButton btn6 = null;
+class ManagerProgram extends JFrame implements ActionListener {	// 매니저 화면 class
+	private JButton btn1 = null, btn2 = null, btn3 = null, btn4 = null, btn5 = null, btn6 = null;
 	JTable table = null;
 
-	public Program() {	
-		super("헤어샵 예약프로그램");
+	public ManagerProgram() {	
+		super("관리자모드");
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.setBounds(200, 200, 800, 400);
 		this.setLayout(new FlowLayout());
@@ -140,11 +208,9 @@ class Program extends JFrame implements ActionListener {	// 화면의 첫 화면
 
 }
 class printDesigner extends JFrame implements ActionListener {	//미용사 예약 출력
-	JButton btn1 = null;
-	JButton btn2 = null;
-	JTable table = null;
-	JTable table2 = null;
-
+	private JButton btn1 = null, btn2 = null;
+	JTable table = null, teble2 = null;
+	
 	ArrayList<Client> client_list;	//고객 정보
 	public printDesigner() {
 		super("미용사별 예약관리");
@@ -187,8 +253,8 @@ class printDesigner extends JFrame implements ActionListener {	//미용사 예�
 		panelButton.add(btn2);
 
 		String data[][] = new String[0][0];
-		table2 = new JTable(data,title);
-		JScrollPane sp2 = new JScrollPane(table2);
+		teble2 = new JTable(data,title);
+		JScrollPane sp2 = new JScrollPane(teble2);
 		sp2.setPreferredSize(new Dimension(300, 200));
 		panelRelated.add(sp2);
 
@@ -211,7 +277,7 @@ class printDesigner extends JFrame implements ActionListener {	//미용사 예�
 			clientDataArray[i][3] = String.valueOf(clientData.time);
 			clientDataArray[i][4] = clientData.hairShape;
 		}
-		table2.setModel(new DefaultTableModel(clientDataArray, titleTemp));
+		teble2.setModel(new DefaultTableModel(clientDataArray, titleTemp));
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -229,20 +295,18 @@ class printDesigner extends JFrame implements ActionListener {	//미용사 예�
 				this.refreshTable();
 			}
 		}
-		if(e.getSource()==btn2){
-			dispose();
-		}
+		if(e.getSource()==btn2)	dispose();// 창 나가기
 	}
 }
 
 class reserveClient extends JFrame implements ActionListener {
-	public int ch = 0, ct = 0;
-	JLabel name, time, designer, hair_shape, number, reyear, remon, reday, caution;
-	JTextField name_t, number_t, reyear_t, remon_t, reday_t;
-	JComboBox time_combo;
-	JComboBox designer_combo,hairShape;
-	JButton btn1, btn2, btn3;
-	ButtonGroup group;
+	private int ch = 0, ct = 0;
+	private JLabel name, time, designer, hair_shape, number, reyear, remon, reday, caution;
+	private JTextField name_t, number_t, reyear_t, remon_t, reday_t;
+	private JComboBox time_combo;
+	private JComboBox designer_combo,hairShape;
+	private JButton btn1, btn2, btn3;
+	private ButtonGroup group;
 
 	public reserveClient() {	//예약 등록
 		super("예약 입력");
@@ -357,7 +421,9 @@ class reserveClient extends JFrame implements ActionListener {
 					ClientManager.list.add(s);
 					name_t.setText(null);
 					number_t.setText(null);
-					reyear_t.setText(null);remon_t.setText(null);reday_t.setText(null);
+					reyear_t.setText(null);
+					remon_t.setText(null);
+					reday_t.setText(null);
 				}
 			}
 		}
@@ -420,7 +486,6 @@ class InputDesigner extends JFrame implements ActionListener {	//미용사 등�
 		this.add(panelButton, BorderLayout.SOUTH);
 
 		this.setVisible(true);
-
 	}
 
 	@Override
