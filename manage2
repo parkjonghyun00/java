@@ -24,7 +24,7 @@ class Test extends JFrame implements ActionListener {
 	JTable table = null;
 
 	public Test() {
-		super("문제");
+		super("헤어샵 예약프로그램");
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.setBounds(200, 200, 500, 500);
 		this.setLayout(new FlowLayout());
@@ -40,10 +40,11 @@ class Test extends JFrame implements ActionListener {
 		panelNormal.setLayout(new FlowLayout());
 
 		// panelTable
-		String title[] = new String[3];
+		String title[] = new String[4];
 		title[0] = "회원 이름";
 		title[1] = "회원 예약시간";
-		title[2] = "머리 모양";
+		title[2] = "회원 머리 모양";
+		title[3] = "회원 담당 미용사";
 
 		String data[][] = new String[0][0];
 
@@ -54,15 +55,15 @@ class Test extends JFrame implements ActionListener {
 		panelTable.add(sp);
 
 		// panelNormal
-		btn1 = new JButton("회원 등록");
+		btn1 = new JButton("예약 등록");
 		btn1.addActionListener(this);
 		panelNormal.add(btn1);
 
-		btn2 = new JButton("회원 삭제");
+		btn2 = new JButton("예약 삭제");
 		btn2.addActionListener(this);
 		panelNormal.add(btn2);
 
-		btn3 = new JButton("회원 출력");
+		btn3 = new JButton("예약 출력");
 		btn3.addActionListener(this);
 		panelNormal.add(btn3);
 
@@ -84,13 +85,14 @@ class Test extends JFrame implements ActionListener {
 	}
 
 	public void refreshTable() {
-		String titleTemp[] = new String[3];
+		String titleTemp[] = new String[4];
 		titleTemp[0] = "회원 이름";
 		titleTemp[1] = "회원 예약시간";
 		titleTemp[2] = "회원 머리모양";
+		titleTemp[3] = "회원 담당 미용사";
 
 		int size = StuManager.list.size();
-		String[][] dataStudentArray = new String[size][3];
+		String[][] dataStudentArray = new String[size][titleTemp.length];
 
 		for (int i = 0; i < size; i++) {
 			Stu dataStudent = StuManager.list.get(i);
@@ -98,6 +100,7 @@ class Test extends JFrame implements ActionListener {
 			dataStudentArray[i][0] = dataStudent.name;
 			dataStudentArray[i][1] = dataStudent.time;
 			dataStudentArray[i][2] = dataStudent.subject;
+			dataStudentArray[i][3] = dataStudent.professor;
 		}
 
 		table.setModel(new DefaultTableModel(dataStudentArray, titleTemp));
@@ -119,13 +122,14 @@ class Test extends JFrame implements ActionListener {
 			}
 		}
 		if (e.getSource() == btn3) {
-			String titleTemp[] = new String[3];
+			String titleTemp[] = new String[4];
 			titleTemp[0] = "회원 이름";
-			titleTemp[1] = "회원 이용시간";
-			titleTemp[2] = "회원 나이";
+			titleTemp[1] = "회원 예약시간";
+			titleTemp[2] = "회원 머리모양";
+			titleTemp[3] = "회원 담당 미용사";
 
 			int size = StuManager.list.size();
-			String[][] dataStudentArray = new String[size][3];
+			String[][] dataStudentArray = new String[size][titleTemp.length];
 
 			for (int i = 0; i < size; i++) {
 				Stu dataStudent = StuManager.list.get(i);
@@ -133,6 +137,7 @@ class Test extends JFrame implements ActionListener {
 				dataStudentArray[i][0] = dataStudent.name;
 				dataStudentArray[i][1] = dataStudent.time;
 				dataStudentArray[i][2] = dataStudent.subject;
+				dataStudentArray[i][3] = dataStudent.professor;
 			}
 
 			table.setModel(new DefaultTableModel(dataStudentArray, titleTemp));
@@ -154,7 +159,7 @@ class ProPrint extends JFrame implements ActionListener {
 
 	ArrayList<Stu> temp_list;
 	public ProPrint() {
-		super("문제");
+		super("미용사별 예약관리");
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.setBounds(200, 200, 500, 600);
 		this.setLayout(new FlowLayout());
@@ -167,22 +172,20 @@ class ProPrint extends JFrame implements ActionListener {
 		panelButton.setLayout(new FlowLayout());
 		panelRelated.setLayout(new FlowLayout());
 
-		String title[] = new String[3];
+		String title[] = new String[2];
 		title[0] = "이름";
-		title[1] = "이용시간";
-		title[2] = "나이";
+		title[1] = "사번";
 
 
 
 		int size = ProManager.list.size();
-		String[][] dataProArray = new String[size][3];
+		String[][] dataProArray = new String[size][2];
 
 		for (int i = 0; i < size; i++) {
 			Pro dataPro = ProManager.list.get(i);
 
 			dataProArray[i][0] = dataPro.name;
-			dataProArray[i][1] = dataPro.time;
-			dataProArray[i][2] = dataPro.age;
+			dataProArray[i][1] = dataPro.age;
 		}
 
 
